@@ -23,7 +23,7 @@
     "db:push": "drizzle-kit push --config packages/db/drizzle.config.ts"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.29.5",
+    "drizzle-kit": "^0.31.4",
     "@typescript-eslint/eslint-plugin": "^8.2.0",
     "@typescript-eslint/parser": "^8.2.0",
     "@types/node": "^20.14.11",

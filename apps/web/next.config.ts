@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["react", "react-dom"],
   },
-  env: {
-    DATABASE_URL: process.env.DATABASE_URL,
-  },
 };
 
 export default nextConfig;
