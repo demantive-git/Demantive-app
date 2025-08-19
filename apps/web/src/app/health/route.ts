@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export async function GET() {
   try {
     // simple db connectivity check
+    const db = getDb();
     await db.execute("select 1");
     return NextResponse.json({
       status: "ok",
