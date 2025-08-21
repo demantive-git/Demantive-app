@@ -60,30 +60,20 @@ export default function OrgsPage() {
     } = await supabase.auth.getSession();
     if (!session) return;
 
-    // Create org
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .insert({ name: newOrgName })
-      .select()
-      .single();
+    // Create org via RPC (atomic: create org + admin membership)
+    const { data, error } = await supabase.rpc("create_org_with_admin", {
+      p_name: newOrgName,
+    });
 
-    if (orgError) {
-      console.error("Error creating org:", orgError);
+    if (error) {
+      console.error("Error creating org:", error);
       setCreating(false);
       return;
     }
 
-    // Add user as admin
-    const { error: memberError } = await supabase.from("memberships").insert({
-      org_id: org.id,
-      user_id: session.user.id,
-      role: "admin",
-    });
-
-    if (memberError) {
-      console.error("Error adding membership:", memberError);
-    } else {
-      router.push(`/dashboard?org=${org.id}`);
+    const created = Array.isArray(data) ? data[0] : data;
+    if (created?.id) {
+      router.push(`/dashboard?org=${created.id}`);
     }
     setCreating(false);
   }
