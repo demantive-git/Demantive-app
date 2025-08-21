@@ -15,7 +15,7 @@ export default function Home() {
                 Sign in
               </a>
               <a
-                href="/auth/login"
+                href="/auth/signup"
                 className="bg-black text-white px-4 py-2 rounded-md hover:bg-neutral-800"
               >
                 Get started
@@ -39,7 +39,7 @@ export default function Home() {
           </p>
           <div className="flex justify-center gap-4">
             <a
-              href="/auth/login"
+              href="/auth/signup"
               className="bg-black text-white px-6 py-3 rounded-md hover:bg-neutral-800"
             >
               Start free trial

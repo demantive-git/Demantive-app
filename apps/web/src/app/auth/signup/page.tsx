@@ -3,21 +3,27 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function handleEmailLogin(e: React.FormEvent) {
+  async function handleEmailSignup(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          name: name,
+        },
+      },
     });
 
     setLoading(false);
@@ -28,7 +34,7 @@ export default function LoginPage() {
     }
   }
 
-  async function handleGoogleLogin() {
+  async function handleGoogleSignup() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -56,17 +62,17 @@ export default function LoginPage() {
         </div>
       </nav>
 
-      {/* Login Form */}
+      {/* Signup Form */}
       <main className="flex items-center justify-center px-4 py-20">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Welcome back</h1>
-            <p className="text-neutral-600">Sign in to your account to continue</p>
+            <h1 className="text-3xl font-bold mb-2">Create your account</h1>
+            <p className="text-neutral-600">Get started with your free trial</p>
           </div>
 
-          {/* Google Sign In */}
+          {/* Google Sign Up */}
           <button
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleSignup}
             disabled={loading}
             className="w-full flex items-center justify-center gap-3 border border-neutral-300 rounded-md px-4 py-2 hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed mb-6"
           >
@@ -88,7 +94,7 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            {loading ? "Signing in..." : "Continue with Google"}
+            {loading ? "Creating account..." : "Continue with Google"}
           </button>
 
           <div className="relative">
@@ -100,7 +106,22 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <form onSubmit={handleEmailLogin} className="space-y-4 mt-6">
+          <form onSubmit={handleEmailSignup} className="space-y-4 mt-6">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium mb-2">
+                Full name
+              </label>
+              <input
+                id="name"
+                type="text"
+                required
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full border border-neutral-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-2">
                 Email address
@@ -124,7 +145,7 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 required
-                placeholder="Enter your password"
+                placeholder="Create a password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full border border-neutral-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -136,16 +157,16 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-black text-white rounded-md px-4 py-2 hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Creating account..." : "Create account"}
             </button>
 
             {message && <div className="text-sm text-center text-red-600">{message}</div>}
           </form>
 
           <p className="text-center text-sm text-neutral-600 mt-8">
-            Don't have an account?{" "}
-            <a href="/auth/signup" className="text-black hover:underline">
-              Sign up
+            Already have an account?{" "}
+            <a href="/auth/login" className="text-black hover:underline">
+              Sign in
             </a>
           </p>
         </div>
