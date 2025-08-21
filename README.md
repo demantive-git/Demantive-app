@@ -32,3 +32,7 @@ Structure
 
 - apps/web — Next.js App Router web app
 - packages/\* — shared packages (planned)
+
+CI
+
+- GitHub Action `DB Push` applies Drizzle migrations on push to main.
