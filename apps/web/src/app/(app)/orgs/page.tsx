@@ -35,7 +35,7 @@ export default function OrgsPage() {
       console.error("Error loading orgs:", error);
     } else {
       const orgList =
-        data?.map((m) => ({
+        data?.map((m: any) => ({
           id: m.organizations.id,
           name: m.organizations.name,
           role: m.role,
