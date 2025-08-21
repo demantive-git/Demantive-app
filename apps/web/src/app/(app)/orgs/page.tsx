@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import { getDb } from "@/lib/db";
-import { organizations, memberships } from "../../../../../packages/db/schema";
 
 type Org = {
   id: string;
