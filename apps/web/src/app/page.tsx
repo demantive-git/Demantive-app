@@ -11,6 +11,10 @@ export default function Home() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
+      // Redirect authenticated users to orgs
+      if (session?.user) {
+        window.location.href = "/orgs";
+      }
     });
 
     // Listen for auth changes
@@ -19,6 +23,9 @@ export default function Home() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
+      if (session?.user) {
+        window.location.href = "/orgs";
+      }
     });
 
     return () => subscription.unsubscribe();
