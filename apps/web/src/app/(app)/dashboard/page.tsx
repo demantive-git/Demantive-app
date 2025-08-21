@@ -39,25 +39,99 @@ function DashboardContent() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold">{org?.name}</h1>
-          <p className="text-neutral-600">Dashboard</p>
+      {/* Dashboard Header */}
+      <div className="bg-white border-b px-8 py-6">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold">{org?.name}</h1>
+            <p className="text-neutral-600 mt-1">Marketing dashboard</p>
+          </div>
+          <a
+            href="/orgs"
+            className="text-sm text-neutral-600 hover:text-neutral-900 flex items-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 9l4-4 4 4m0 6l-4 4-4-4"
+              />
+            </svg>
+            Switch organization
+          </a>
         </div>
-        <a href="/orgs" className="text-sm underline">
-          Switch org
-        </a>
       </div>
 
-      <div className="grid gap-4">
-        <div className="p-6 border rounded">
-          <h2 className="font-medium mb-2">Programs</h2>
-          <p className="text-neutral-600">No programs configured yet.</p>
-        </div>
+      {/* Main Dashboard Content */}
+      <div className="px-8 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white rounded-lg p-6 border">
+              <h3 className="text-sm font-medium text-neutral-600 mb-1">Total Pipeline</h3>
+              <p className="text-3xl font-semibold">—</p>
+              <p className="text-sm text-neutral-500 mt-1">No data yet</p>
+            </div>
+            <div className="bg-white rounded-lg p-6 border">
+              <h3 className="text-sm font-medium text-neutral-600 mb-1">Active Programs</h3>
+              <p className="text-3xl font-semibold">0</p>
+              <p className="text-sm text-neutral-500 mt-1">Set up programs first</p>
+            </div>
+            <div className="bg-white rounded-lg p-6 border">
+              <h3 className="text-sm font-medium text-neutral-600 mb-1">New Opportunities</h3>
+              <p className="text-3xl font-semibold">—</p>
+              <p className="text-sm text-neutral-500 mt-1">Connect your CRM</p>
+            </div>
+          </div>
 
-        <div className="p-6 border rounded">
-          <h2 className="font-medium mb-2">CRM Connection</h2>
-          <p className="text-neutral-600">No CRM connected yet.</p>
+          {/* Setup Steps */}
+          <div className="bg-white rounded-lg border p-8">
+            <h2 className="text-lg font-semibold mb-6">Get Started</h2>
+            <div className="space-y-6">
+              {/* Step 1: Connect CRM */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-8 h-8 bg-neutral-100 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium">1</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium mb-1">Connect your CRM</h3>
+                  <p className="text-sm text-neutral-600 mb-3">
+                    Import your pipeline data from HubSpot or Salesforce
+                  </p>
+                  <button className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-neutral-800">
+                    Connect CRM →
+                  </button>
+                </div>
+              </div>
+
+              {/* Step 2: Map Programs */}
+              <div className="flex gap-4 opacity-50">
+                <div className="flex-shrink-0 w-8 h-8 bg-neutral-100 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium">2</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium mb-1">Map your programs</h3>
+                  <p className="text-sm text-neutral-600">
+                    Group campaigns into programs for better insights
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 3: View Insights */}
+              <div className="flex gap-4 opacity-50">
+                <div className="flex-shrink-0 w-8 h-8 bg-neutral-100 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium">3</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium mb-1">View insights</h3>
+                  <p className="text-sm text-neutral-600">
+                    See what's working and get AI-powered recommendations
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -66,12 +140,14 @@ function DashboardContent() {
 
 export default function DashboardPage() {
   return (
-    <main className="min-h-dvh p-8">
-      <div className="max-w-4xl mx-auto">
-        <Suspense fallback={<p>Loading...</p>}>
-          <DashboardContent />
-        </Suspense>
-      </div>
-    </main>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-20">
+          <p>Loading...</p>
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
   );
 }

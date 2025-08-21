@@ -97,46 +97,72 @@ export default function OrgsPage() {
   }
 
   return (
-    <main className="min-h-dvh p-8">
+    <div className="py-12 px-4">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-8">Select Organization</h1>
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold mb-2">Select Organization</h1>
+          <p className="text-neutral-600">Choose an organization to continue</p>
+        </div>
 
         {orgs.length > 0 && (
-          <div className="space-y-2 mb-8">
+          <div className="space-y-3 mb-12">
             {orgs.map((org) => (
               <a
                 key={org.id}
                 href={`/dashboard?org=${org.id}`}
-                className="block p-4 border rounded hover:bg-neutral-50"
+                className="block p-6 bg-white border rounded-lg hover:shadow-md transition-shadow"
               >
-                <div className="font-medium">{org.name}</div>
-                <div className="text-sm text-neutral-600">{org.role}</div>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold text-lg">{org.name}</h3>
+                    <p className="text-sm text-neutral-600 mt-1">Role: {org.role}</p>
+                  </div>
+                  <svg
+                    className="w-5 h-5 text-neutral-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
               </a>
             ))}
           </div>
         )}
 
-        <div className="border-t pt-8">
-          <h2 className="text-lg font-medium mb-4">Create New Organization</h2>
+        <div className={`bg-white rounded-lg p-8 ${orgs.length > 0 ? "border" : "shadow-lg"}`}>
+          <h2 className="text-xl font-semibold mb-6">Create New Organization</h2>
           <form onSubmit={createOrg} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Organization name"
-              value={newOrgName}
-              onChange={(e) => setNewOrgName(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
+            <div>
+              <label htmlFor="org-name" className="block text-sm font-medium mb-2">
+                Organization name
+              </label>
+              <input
+                id="org-name"
+                type="text"
+                placeholder="Acme Inc."
+                value={newOrgName}
+                onChange={(e) => setNewOrgName(e.target.value)}
+                className="w-full border border-neutral-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                required
+              />
+            </div>
             <button
               type="submit"
               disabled={creating}
-              className="bg-black text-white rounded px-4 py-2"
+              className="w-full bg-black text-white rounded-md px-4 py-2 hover:bg-neutral-800 disabled:opacity-50"
             >
               {creating ? "Creating..." : "Create organization"}
             </button>
           </form>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

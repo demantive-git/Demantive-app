@@ -1,64 +1,141 @@
-"use client";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-
 export default function Home() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-      // Redirect authenticated users to orgs
-      if (session?.user) {
-        window.location.href = "/orgs";
-      }
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-      if (session?.user) {
-        window.location.href = "/orgs";
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (loading) {
-    return (
-      <main className="min-h-dvh p-8 flex items-center justify-center">
-        <p>Loading...</p>
-      </main>
-    );
-  }
-
   return (
-    <main className="min-h-dvh p-8 flex items-center justify-center">
-      <div className="max-w-2xl w-full text-center space-y-4">
-        <h1 className="text-3xl font-semibold tracking-tight">Demantive</h1>
-        <p className="text-neutral-700">CMO visibility app — connect-and-go.</p>
-        {user ? (
-          <div className="space-y-2">
-            <p className="text-green-600">✓ Signed in as {user.email}</p>
-            <button onClick={() => supabase.auth.signOut()} className="underline text-sm">
-              Sign out
-            </button>
+    <div className="min-h-dvh">
+      {/* Navigation */}
+      <nav className="border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center">
+              <a href="/" className="text-xl font-semibold">
+                Demantive
+              </a>
+            </div>
+            <div className="flex items-center space-x-4">
+              <a href="/auth/login" className="text-neutral-600 hover:text-neutral-900">
+                Sign in
+              </a>
+              <a
+                href="/auth/login"
+                className="bg-black text-white px-4 py-2 rounded-md hover:bg-neutral-800"
+              >
+                Get started
+              </a>
+            </div>
           </div>
-        ) : (
-          <p>
-            <a href="/auth/login" className="inline-block mt-2 underline">
-              Log in
-            </a>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="pt-20 pb-32 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-5xl font-bold tracking-tight mb-6">
+            CMO visibility in minutes,
+            <br />
+            not months
+          </h1>
+          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto">
+            Connect your CRM and instantly see what programs are driving pipeline, what changed, and
+            what to do next. No dashboards to build.
           </p>
-        )}
-      </div>
-    </main>
+          <div className="flex justify-center gap-4">
+            <a
+              href="/auth/login"
+              className="bg-black text-white px-6 py-3 rounded-md hover:bg-neutral-800"
+            >
+              Start free trial
+            </a>
+            <a
+              href="#how-it-works"
+              className="border border-neutral-300 px-6 py-3 rounded-md hover:bg-neutral-50"
+            >
+              See how it works
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="py-20 bg-neutral-50 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Everything a CMO needs, nothing they don't
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3">Programs View</h3>
+              <p className="text-neutral-600">
+                See all your programs rolled up from CRM data. Know exactly what's driving pipeline
+                without building complex reports.
+              </p>
+            </div>
+            <div className="bg-white p-8 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3">What Changed</h3>
+              <p className="text-neutral-600">
+                Weekly and monthly deltas with one-line explanations. No more digging through data
+                to understand movements.
+              </p>
+            </div>
+            <div className="bg-white p-8 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3">Next Actions</h3>
+              <p className="text-neutral-600">
+                AI-powered recommendations on your next 3 moves. Stop guessing, start executing with
+                confidence.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it Works */}
+      <section id="how-it-works" className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">Connect and go in 5 minutes</h2>
+          <div className="max-w-3xl mx-auto">
+            <div className="space-y-8">
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-semibold">
+                  1
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Connect your CRM</h3>
+                  <p className="text-neutral-600">
+                    OAuth into HubSpot or Salesforce. We'll pull the last 90 days of data.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-semibold">
+                  2
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Map your programs</h3>
+                  <p className="text-neutral-600">
+                    Simple rules to group campaigns into programs. We'll suggest smart defaults.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-semibold">
+                  3
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Get insights instantly</h3>
+                  <p className="text-neutral-600">
+                    See your dashboard, chat with your data, and get weekly executive summaries.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t py-12 px-4">
+        <div className="max-w-7xl mx-auto text-center text-neutral-600">
+          <p>&copy; 2025 Demantive. CMO visibility, simplified.</p>
+        </div>
+      </footer>
+    </div>
   );
 }
