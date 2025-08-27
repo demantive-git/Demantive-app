@@ -272,7 +272,7 @@ function ProgramsContent() {
             setShowEditModal(false);
             setEditingProgram(null);
           }}
-          onUpdate={(updates) => updateProgram(editingProgram.id, updates)}
+          onUpdate={(updates: any) => updateProgram(editingProgram.id, updates)}
           onRulesUpdated={() => loadPrograms()}
         />
       )}
