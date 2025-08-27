@@ -15,12 +15,12 @@ export function AppNav() {
   ];
 
   return (
-    <nav className="bg-white border-b">
-      <div className="max-w-7xl mx-auto px-8">
+    <nav className="bg-white border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo/App Name */}
           <div className="flex items-center gap-8">
-            <Link href={`/dashboard?org=${orgId}`} className="font-bold text-xl">
+            <Link href={`/dashboard?org=${orgId}`} className="font-semibold text-xl text-gray-900">
               Demantive
             </Link>
 
@@ -33,7 +33,7 @@ export function AppNav() {
                     key={item.href}
                     href={item.href}
                     className={`text-sm font-medium transition-colors ${
-                      isActive ? "text-black" : "text-neutral-600 hover:text-neutral-900"
+                      isActive ? "text-black" : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
                     {item.label}
@@ -43,9 +43,9 @@ export function AppNav() {
             </div>
           </div>
 
-          {/* Right side - will add user menu later */}
+          {/* Right side */}
           <div className="flex items-center gap-4">
-            <Link href="/orgs" className="text-sm text-neutral-600 hover:text-neutral-900">
+            <Link href="/orgs" className="text-sm text-gray-600 hover:text-gray-900">
               Switch Org
             </Link>
           </div>

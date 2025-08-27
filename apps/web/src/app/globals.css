@@ -1,158 +1,23 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 :root {
-  /* Base Colors - Premium White Theme */
   --background: #ffffff;
-  --foreground: #1d1d1f;
-
-  /* Neutral Palette - Apple-inspired grays */
-  --gray-50: #f5f5f7;
-  --gray-100: #f0f0f2;
-  --gray-200: #e5e5e7;
-  --gray-300: #d1d1d6;
-  --gray-400: #86868b;
-  --gray-500: #6e6e73;
-  --gray-600: #48484a;
-  --gray-700: #3a3a3c;
-  --gray-800: #2c2c2e;
-  --gray-900: #1d1d1f;
-
-  /* Accent Colors */
-  --primary: #007aff;
-  --primary-hover: #0051d5;
-  --success: #34c759;
-  --warning: #ff9500;
-  --danger: #ff3b30;
-
-  /* Shadows - Subtle and premium */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.05), 0 10px 10px rgba(0, 0, 0, 0.04);
-
-  /* Border Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --foreground: #171717;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
-  --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", monospace;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 /* Force light mode per roadmap */
 
-* {
-  box-sizing: border-box;
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings:
-    "kern" 1,
-    "liga" 1,
-    "calt" 1;
-}
-
-/* Global focus styles */
-*:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Selection color */
-::selection {
-  background-color: rgba(0, 122, 255, 0.15);
-  color: var(--foreground);
-}
-
-/* Premium button styles */
-button {
-  font-family: inherit;
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-/* Premium input styles */
-input,
-textarea,
-select {
-  font-family: inherit;
-  transition: all var(--transition-base);
-}
-
-/* Disable default tap highlight on mobile */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Premium scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--gray-300);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--gray-400);
-}
-
-/* Animation classes */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn var(--transition-slow) ease-out;
-}
-
-.animate-slide-in {
-  animation: slideIn var(--transition-slow) ease-out;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+    sans-serif;
 }
