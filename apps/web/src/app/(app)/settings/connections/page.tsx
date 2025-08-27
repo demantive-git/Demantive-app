@@ -95,7 +95,9 @@ function ConnectionsContent() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
-      const response = await fetch(`/api/sync/${provider}`, {
+      // Use quick sync endpoint for better performance
+      const endpoint = provider === "hubspot" ? `/api/sync/hubspot/quick` : `/api/sync/${provider}`;
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,9 +120,12 @@ function ConnectionsContent() {
       }
 
       if (response.ok) {
+        const message =
+          data.message ||
+          `Successfully synced ${data.counts?.contacts || 0} contacts, ${data.counts?.companies || 0} companies, and ${data.counts?.deals || 0} deals`;
         setMessage({
           type: "success",
-          text: `Successfully synced ${data.counts?.contacts || 0} contacts, ${data.counts?.companies || 0} companies, and ${data.counts?.deals || 0} deals`,
+          text: message,
         });
         loadConnections(); // Refresh to show updated sync time
       } else {
