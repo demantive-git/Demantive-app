@@ -20,15 +20,20 @@ export async function GET(request: NextRequest) {
   const orgId = searchParams.get("state"); // We passed org ID in state
   const error = searchParams.get("error");
 
+  const baseUrlForError =
+    process.env.NODE_ENV === "production"
+      ? "https://demantive-app-web.vercel.app"
+      : "http://localhost:3000";
+
   if (error) {
     return NextResponse.redirect(
-      `/settings/connections?org=${orgId}&error=${encodeURIComponent(error)}`,
+      `${baseUrlForError}/settings/connections?org=${orgId}&error=${encodeURIComponent(error)}`,
     );
   }
 
   if (!code || !orgId) {
     return NextResponse.redirect(
-      `/settings/connections?org=${orgId}&error=${encodeURIComponent("Missing code or organization")}`,
+      `${baseUrlForError}/settings/connections?org=${orgId}&error=${encodeURIComponent("Missing code or organization")}`,
     );
   }
 
@@ -42,7 +47,7 @@ export async function GET(request: NextRequest) {
 
   if (!clientId || !clientSecret) {
     return NextResponse.redirect(
-      `/settings/connections?org=${orgId}&error=${encodeURIComponent("HubSpot configuration missing")}`,
+      `${baseUrlForError}/settings/connections?org=${orgId}&error=${encodeURIComponent("HubSpot configuration missing")}`,
     );
   }
 
@@ -99,11 +104,19 @@ export async function GET(request: NextRequest) {
     }
 
     // Redirect back to connections page
-    return NextResponse.redirect(`/settings/connections?org=${orgId}&success=hubspot`);
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://demantive-app-web.vercel.app"
+        : "http://localhost:3000";
+    return NextResponse.redirect(`${baseUrl}/settings/connections?org=${orgId}&success=hubspot`);
   } catch (error) {
     console.error("HubSpot OAuth error:", error);
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://demantive-app-web.vercel.app"
+        : "http://localhost:3000";
     return NextResponse.redirect(
-      `/settings/connections?org=${orgId}&error=${encodeURIComponent("Failed to connect HubSpot")}`,
+      `${baseUrl}/settings/connections?org=${orgId}&error=${encodeURIComponent("Failed to connect HubSpot")}`,
     );
   }
 }
