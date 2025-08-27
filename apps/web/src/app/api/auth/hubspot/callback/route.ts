@@ -34,7 +34,10 @@ export async function GET(request: NextRequest) {
 
   const clientId = process.env.HUBSPOT_CLIENT_ID;
   const clientSecret = process.env.HUBSPOT_CLIENT_SECRET;
-  const redirectUri = `${process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000"}/api/auth/hubspot/callback`;
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
+  const redirectUri = `${baseUrl}/api/auth/hubspot/callback`;
 
   if (!clientId || !clientSecret) {
     return NextResponse.redirect(
@@ -82,7 +85,8 @@ export async function GET(request: NextRequest) {
         refresh_token_cipher: encryptedRefreshToken,
         expires_at: expiresAt.toISOString(),
         status: "active",
-        scope: "crm.objects.contacts.read crm.objects.companies.read crm.objects.deals.read",
+        scope:
+          "oauth crm.objects.leads.read crm.objects.leads.write crm.objects.contacts.read crm.objects.contacts.write crm.objects.companies.read crm.objects.companies.write crm.objects.deals.read crm.objects.deals.write",
       },
       {
         onConflict: "org_id,provider",

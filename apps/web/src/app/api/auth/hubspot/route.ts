@@ -14,14 +14,19 @@ export async function GET(request: NextRequest) {
   }
 
   // Build HubSpot OAuth URL
-  const redirectUri = `${process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000"}/api/auth/hubspot/callback`;
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
+  const redirectUri = `${baseUrl}/api/auth/hubspot/callback`;
   const scopes = [
-    "crm.objects.contacts.read",
-    "crm.objects.companies.read",
-    "crm.objects.deals.read",
     "oauth",
+    "crm.objects.leads.read",
+    "crm.objects.leads.write",
+    "crm.objects.contacts.read",
     "crm.objects.contacts.write",
+    "crm.objects.companies.read",
     "crm.objects.companies.write",
+    "crm.objects.deals.read",
     "crm.objects.deals.write",
   ].join(" ");
 
