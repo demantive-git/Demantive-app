@@ -58,29 +58,54 @@ function ConnectionsContent() {
   async function handleSync(provider: "hubspot" | "salesforce") {
     setSyncing(true);
     setMessage(null);
+    console.log("Starting sync for", provider, "org:", orgId);
 
     try {
+      // Add timeout to prevent infinite waiting
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+
       const response = await fetch(`/api/sync/${provider}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ orgId }),
+        signal: controller.signal,
       });
 
-      const data = await response.json();
+      clearTimeout(timeoutId);
+
+      console.log("Sync response status:", response.status);
+
+      let data;
+      try {
+        data = await response.json();
+        console.log("Sync response data:", data);
+      } catch (e) {
+        console.error("Failed to parse response:", e);
+        throw new Error("Invalid response from server");
+      }
 
       if (response.ok) {
         setMessage({
           type: "success",
-          text: `Successfully synced ${data.counts.contacts} contacts, ${data.counts.companies} companies, and ${data.counts.deals} deals`,
+          text: `Successfully synced ${data.counts?.contacts || 0} contacts, ${data.counts?.companies || 0} companies, and ${data.counts?.deals || 0} deals`,
         });
         loadConnections(); // Refresh to show updated sync time
       } else {
         setMessage({ type: "error", text: data.error || "Sync failed" });
       }
-    } catch (error) {
-      setMessage({ type: "error", text: "Failed to sync data" });
+    } catch (error: any) {
+      console.error("Sync error:", error);
+      if (error.name === "AbortError") {
+        setMessage({
+          type: "error",
+          text: "Sync timed out. This might happen with large datasets. Please try again.",
+        });
+      } else {
+        setMessage({ type: "error", text: error.message || "Failed to sync data" });
+      }
     } finally {
       setSyncing(false);
     }

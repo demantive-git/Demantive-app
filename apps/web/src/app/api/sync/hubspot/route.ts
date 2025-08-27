@@ -73,8 +73,11 @@ class HubSpotClient {
 }
 
 export async function POST(request: NextRequest) {
+  console.log("Sync API called");
+
   try {
     const { orgId } = await request.json();
+    console.log("Syncing for org:", orgId);
 
     if (!orgId) {
       return NextResponse.json({ error: "Missing orgId" }, { status: 400 });
