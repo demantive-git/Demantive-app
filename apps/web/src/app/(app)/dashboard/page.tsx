@@ -8,6 +8,7 @@ function DashboardContent() {
   const router = useRouter();
   const [org, setOrg] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [hubspotConnected, setHubspotConnected] = useState<boolean>(false);
   const orgId = searchParams.get("org");
 
   useEffect(() => {
@@ -16,6 +17,10 @@ function DashboardContent() {
       return;
     }
     loadOrg();
+    // Also check connection status
+    if (orgId) {
+      checkConnection(orgId);
+    }
   }, [orgId]);
 
   async function loadOrg() {
@@ -31,6 +36,20 @@ function DashboardContent() {
       setOrg(data);
     }
     setLoading(false);
+  }
+
+  async function checkConnection(currentOrgId: string) {
+    const { data, error } = await supabase
+      .from("oauth_connections")
+      .select("status")
+      .eq("org_id", currentOrgId)
+      .eq("provider", "hubspot")
+      .maybeSingle();
+    if (!error && data && data.status === "connected") {
+      setHubspotConnected(true);
+    } else {
+      setHubspotConnected(false);
+    }
   }
 
   if (loading) {
@@ -99,9 +118,18 @@ function DashboardContent() {
                   <p className="text-sm text-neutral-600 mb-3">
                     Import your pipeline data from HubSpot or Salesforce
                   </p>
-                  <button className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-neutral-800">
-                    Connect CRM →
-                  </button>
+                  {hubspotConnected ? (
+                    <span className="inline-flex items-center text-sm px-3 py-1 rounded-md bg-green-100 text-green-800 border border-green-200">
+                      HubSpot connected
+                    </span>
+                  ) : (
+                    <a
+                      href={`/settings/connections?org=${orgId}`}
+                      className="inline-block bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-neutral-800"
+                    >
+                      Connect CRM →
+                    </a>
+                  )}
                 </div>
               </div>
 

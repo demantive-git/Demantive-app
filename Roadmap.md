@@ -6,6 +6,34 @@ IMPORTANT:
 2. For api key and secrets I will use the vercel envirnonment variable
 3. Always push git through termninal to deploy in vercel instead of building locally
 
+## status snapshot (source of truth)
+
+- Live deploy: Vercel (working)
+- Env vars: set on Vercel (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `DATABASE_URL`)
+- Auth: Supabase email/password + Google OAuth (working)
+- Multitenancy: base tables `organizations`, `users`, `memberships` in place
+- RLS: enabled on all three tables and policies applied (working)
+- Function: `user_orgs()` (security definer) exists
+- RPC: `create_org_with_admin(name text)` creates org + admin membership atomically (used by UI)
+- UI: Org selection + create org flow (working)
+- Build: pnpm aligned to `10.14.0`; Vercel deploys succeed
+- CI: GitHub Action runs `db:push` (Drizzle); for RLS/policies we applied SQL directly in Supabase
+
+## decisions (locked for now)
+
+- Use Supabase Auth with email/password + Google (no magic links)
+- Create organizations via RPC to satisfy RLS and ensure atomicity
+- Keep RLS/policies/functions managed via idempotent SQL in Supabase (can migrate to Drizzle migrations later)
+- Keep UI strictly light mode
+
+## near-term next (priority)
+
+1. Org switching UX polish (list + active indicator)
+2. Default post-signup redirect to `/orgs` → auto-redirect to sole org if only one
+3. Invitations: add membership by email (admin only)
+4. Basic Sentry client setup
+5. Health endpoint already exists; wire to status page in UI
+
 # what we're building (short + sharp)
 
 A production "connect-and-go" CMO visibility app that sits on top of HubSpot/Salesforce and gives:
