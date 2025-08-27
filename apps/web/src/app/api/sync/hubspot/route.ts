@@ -96,6 +96,51 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No active HubSpot connection found" }, { status: 404 });
     }
 
+    // Check if token is expired or about to expire
+    const expiresAt = connection.expires_at ? new Date(connection.expires_at) : null;
+    const now = new Date();
+    const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
+
+    if (expiresAt && expiresAt < fiveMinutesFromNow) {
+      console.log("Token expired or expiring soon, refreshing...");
+
+      // Refresh the token first
+      const refreshResponse = await fetch(
+        `${request.url.split("/api/")[0]}/api/auth/hubspot/refresh`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orgId }),
+        },
+      );
+
+      if (!refreshResponse.ok) {
+        const refreshError = await refreshResponse.json();
+        return NextResponse.json(
+          {
+            error: "Token expired and refresh failed. Please reconnect HubSpot.",
+            details: refreshError.error,
+          },
+          { status: 401 },
+        );
+      }
+
+      // Get the updated connection with new token
+      const { data: updatedConnection } = await supabaseAdmin
+        .from("oauth_connections")
+        .select("*")
+        .eq("org_id", orgId)
+        .eq("provider", "hubspot")
+        .eq("status", "active")
+        .single();
+
+      if (!updatedConnection) {
+        return NextResponse.json({ error: "Failed to get updated connection" }, { status: 500 });
+      }
+
+      connection.access_token_cipher = updatedConnection.access_token_cipher;
+    }
+
     // Decrypt the access token
     const accessToken = decrypt(connection.access_token_cipher);
 

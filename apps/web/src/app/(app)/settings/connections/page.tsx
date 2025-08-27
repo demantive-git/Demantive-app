@@ -55,6 +55,36 @@ function ConnectionsContent() {
     window.location.href = authUrl;
   }
 
+  async function handleDisconnect(provider: "hubspot" | "salesforce") {
+    if (!confirm(`Are you sure you want to disconnect ${provider}? You can reconnect anytime.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth/disconnect", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ orgId, provider }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          text: `${provider} disconnected successfully`,
+        });
+        loadConnections(); // Refresh the list
+      } else {
+        setMessage({ type: "error", text: data.error || "Failed to disconnect" });
+      }
+    } catch (error: any) {
+      setMessage({ type: "error", text: "Failed to disconnect" });
+    }
+  }
+
   async function handleSync(provider: "hubspot" | "salesforce") {
     setSyncing(true);
     setMessage(null);
@@ -94,7 +124,15 @@ function ConnectionsContent() {
         });
         loadConnections(); // Refresh to show updated sync time
       } else {
-        setMessage({ type: "error", text: data.error || "Sync failed" });
+        // Handle specific error cases
+        if (response.status === 401 && data.error?.includes("expired")) {
+          setMessage({
+            type: "error",
+            text: "HubSpot connection expired. Please disconnect and reconnect to refresh access.",
+          });
+        } else {
+          setMessage({ type: "error", text: data.error || "Sync failed" });
+        }
       }
     } catch (error: any) {
       console.error("Sync error:", error);
@@ -226,7 +264,10 @@ function ConnectionsContent() {
                     >
                       {syncing ? "Syncing..." : "Sync Now"}
                     </button>
-                    <button className="text-sm text-neutral-600 hover:text-neutral-900">
+                    <button
+                      onClick={() => handleDisconnect("hubspot")}
+                      className="text-sm text-neutral-600 hover:text-neutral-900"
+                    >
                       Disconnect
                     </button>
                   </div>
