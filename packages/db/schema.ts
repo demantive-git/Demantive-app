@@ -7,6 +7,7 @@ import {
   pgEnum,
   jsonb,
   integer,
+  unique,
 } from "drizzle-orm/pg-core";
 
 // Enum for membership roles
@@ -60,23 +61,29 @@ export const memberships = pgTable(
 );
 
 // OAuth connections for CRMs
-export const oauthConnections = pgTable("oauth_connections", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  orgId: uuid("org_id")
-    .notNull()
-    .references(() => organizations.id, { onDelete: "cascade" }),
-  provider: crmProviderEnum("provider").notNull(),
-  instanceBaseUrl: text("instance_base_url"), // For Salesforce instances
-  accessTokenCipher: text("access_token_cipher").notNull(), // Encrypted
-  refreshTokenCipher: text("refresh_token_cipher"), // Encrypted
-  scope: text("scope"),
-  expiresAt: timestamp("expires_at"),
-  status: connectionStatusEnum("status").notNull().default("active"),
-  lastSyncedAt: timestamp("last_synced_at"),
-  cursor: text("cursor"), // For incremental sync
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const oauthConnections = pgTable(
+  "oauth_connections",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    orgId: uuid("org_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    provider: crmProviderEnum("provider").notNull(),
+    instanceBaseUrl: text("instance_base_url"), // For Salesforce instances
+    accessTokenCipher: text("access_token_cipher").notNull(), // Encrypted
+    refreshTokenCipher: text("refresh_token_cipher"), // Encrypted
+    scope: text("scope"),
+    expiresAt: timestamp("expires_at"),
+    status: connectionStatusEnum("status").notNull().default("active"),
+    lastSyncedAt: timestamp("last_synced_at"),
+    cursor: text("cursor"), // For incremental sync
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    orgProviderUnique: unique().on(table.orgId, table.provider),
+  }),
+);
 
 // Sync run history
 export const syncRuns = pgTable("sync_runs", {
