@@ -2,12 +2,14 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { AppNav } from "@/components/AppNav";
 
 function ConnectionsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [connections, setConnections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const orgId = searchParams.get("org");
   const success = searchParams.get("success");
@@ -53,22 +55,48 @@ function ConnectionsContent() {
     window.location.href = authUrl;
   }
 
+  async function handleSync(provider: "hubspot" | "salesforce") {
+    setSyncing(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch(`/api/sync/${provider}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ orgId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          text: `Successfully synced ${data.counts.contacts} contacts, ${data.counts.companies} companies, and ${data.counts.deals} deals`,
+        });
+        loadConnections(); // Refresh to show updated sync time
+      } else {
+        setMessage({ type: "error", text: data.error || "Sync failed" });
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Failed to sync data" });
+    } finally {
+      setSyncing(false);
+    }
+  }
+
   if (loading) {
     return <p>Loading connections...</p>;
   }
 
   return (
     <div>
+      <AppNav />
+
       {/* Page Header */}
-      <div className="bg-white border-b px-8 py-6">
+      <div className="bg-neutral-50 px-8 py-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 text-sm text-neutral-600 mb-2">
-            <a href={`/dashboard?org=${orgId}`} className="hover:text-neutral-900">
-              Dashboard
-            </a>
-            <span>/</span>
-            <span>Connections</span>
-          </div>
           <h1 className="text-2xl font-bold">CRM Connections</h1>
           <p className="text-neutral-600 mt-1">Connect your CRM to import pipeline data</p>
         </div>
@@ -165,9 +193,18 @@ function ConnectionsContent() {
                 </div>
 
                 {connections.find((c) => c.provider === "hubspot") && (
-                  <button className="text-sm text-neutral-600 hover:text-neutral-900">
-                    Disconnect
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleSync("hubspot")}
+                      disabled={syncing}
+                      className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-neutral-800 disabled:opacity-50"
+                    >
+                      {syncing ? "Syncing..." : "Sync Now"}
+                    </button>
+                    <button className="text-sm text-neutral-600 hover:text-neutral-900">
+                      Disconnect
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

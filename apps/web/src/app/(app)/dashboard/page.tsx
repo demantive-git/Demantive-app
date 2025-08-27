@@ -2,6 +2,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { AppNav } from "@/components/AppNav";
 
 function DashboardContent() {
   const searchParams = useSearchParams();
@@ -58,27 +59,13 @@ function DashboardContent() {
 
   return (
     <div>
+      <AppNav />
+
       {/* Dashboard Header */}
-      <div className="bg-white border-b px-8 py-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold">{org?.name}</h1>
-            <p className="text-neutral-600 mt-1">Marketing dashboard</p>
-          </div>
-          <a
-            href="/orgs"
-            className="text-sm text-neutral-600 hover:text-neutral-900 flex items-center gap-1"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 9l4-4 4 4m0 6l-4 4-4-4"
-              />
-            </svg>
-            Switch organization
-          </a>
+      <div className="bg-neutral-50 px-8 py-6">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-2xl font-bold">{org?.name}</h1>
+          <p className="text-neutral-600 mt-1">Marketing pipeline overview</p>
         </div>
       </div>
 
