@@ -55,33 +55,30 @@ function DashboardContent() {
         .eq("status", "active")
         .single();
 
-      // Get deal statistics from raw_objects
-      const { data: deals } = await supabase
-        .from("raw_objects")
-        .select("payload_json")
+      // Get opportunity statistics from normalized table
+      const { data: opportunities } = await supabase
+        .from("opportunities")
+        .select("*")
         .eq("org_id", orgId)
-        .eq("provider", "hubspot")
-        .eq("object_type", "deal");
+        .order("created_at", { ascending: false });
 
-      if (deals && deals.length > 0) {
+      if (opportunities && opportunities.length > 0) {
         // Calculate statistics
         let totalPipeline = 0;
         let wonAmount = 0;
         let wonCount = 0;
         const recentDealsList: any[] = [];
 
-        deals.forEach((deal: any) => {
-          const properties = deal.payload_json?.properties || {};
-          const amount = parseFloat(properties.amount) || 0;
-          const stage = properties.dealstage;
+        opportunities.forEach((opp: any) => {
+          const amount = (opp.amount || 0) / 100; // Convert from cents to dollars
 
           // Add to pipeline total
-          if (stage !== "closedlost") {
+          if (opp.status !== "lost") {
             totalPipeline += amount;
           }
 
           // Track won deals
-          if (stage === "closedwon") {
+          if (opp.status === "won") {
             wonAmount += amount;
             wonCount++;
           }
@@ -89,19 +86,20 @@ function DashboardContent() {
           // Collect recent deals (last 5)
           if (recentDealsList.length < 5) {
             recentDealsList.push({
-              name: properties.dealname || "Unnamed Deal",
+              name: opp.name,
               amount: amount,
-              stage: stage,
-              closeDate: properties.closedate,
-              company: properties.associatedcompanyid,
+              stage: opp.stage,
+              status: opp.status,
+              closeDate: opp.close_date,
+              source: opp.source,
             });
           }
         });
 
-        const avgDeal = deals.length > 0 ? totalPipeline / deals.length : 0;
+        const avgDeal = opportunities.length > 0 ? totalPipeline / opportunities.length : 0;
 
         setStats({
-          totalDeals: deals.length,
+          totalDeals: opportunities.length,
           totalPipeline,
           wonDeals: wonCount,
           wonAmount,
@@ -236,12 +234,20 @@ function DashboardContent() {
                         <div>
                           <h3 className="font-medium">{deal.name}</h3>
                           <p className="text-sm text-neutral-600 mt-1">
-                            Stage:{" "}
-                            <span className="font-medium capitalize">
-                              {deal.stage?.replace("closed", "Closed ")}
-                            </span>
-                            {deal.closeDate &&
-                              ` • Closes ${new Date(deal.closeDate).toLocaleDateString()}`}
+                            {deal.status === "won" ? (
+                              <span className="text-green-600">Won</span>
+                            ) : deal.status === "lost" ? (
+                              <span className="text-red-600">Lost</span>
+                            ) : (
+                              <>
+                                Stage: <span className="font-medium">{deal.stage}</span>
+                                {deal.closeDate &&
+                                  ` • Closes ${new Date(deal.closeDate).toLocaleDateString()}`}
+                              </>
+                            )}
+                            {deal.source && (
+                              <span className="text-neutral-500"> • Source: {deal.source}</span>
+                            )}
                           </p>
                         </div>
                         <div className="text-right">

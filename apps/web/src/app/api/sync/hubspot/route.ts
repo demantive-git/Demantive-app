@@ -216,6 +216,93 @@ export async function POST(request: NextRequest) {
         })
         .eq("id", syncRun.id);
 
+      // Normalize the data
+      console.log("Starting normalization...");
+
+      // Normalize companies first
+      const { data: rawCompanies } = await supabaseAdmin
+        .from("raw_objects")
+        .select("external_id, payload_json")
+        .eq("org_id", orgId)
+        .eq("provider", "hubspot")
+        .eq("object_type", "company");
+
+      for (const rawCompany of rawCompanies || []) {
+        const props = rawCompany.payload_json?.properties || {};
+        await supabaseAdmin.from("companies").upsert(
+          {
+            org_id: orgId,
+            external_id: rawCompany.external_id,
+            provider: "hubspot",
+            name: props.name || "Unknown Company",
+            domain: props.domain,
+            industry: props.industry,
+          },
+          {
+            onConflict: "org_id,provider,external_id",
+          },
+        );
+      }
+
+      // Normalize contacts
+      const { data: rawContacts } = await supabaseAdmin
+        .from("raw_objects")
+        .select("external_id, payload_json")
+        .eq("org_id", orgId)
+        .eq("provider", "hubspot")
+        .eq("object_type", "contact");
+
+      for (const rawContact of rawContacts || []) {
+        const props = rawContact.payload_json?.properties || {};
+        await supabaseAdmin.from("people").upsert(
+          {
+            org_id: orgId,
+            external_id: rawContact.external_id,
+            provider: "hubspot",
+            email: props.email,
+            first_name: props.firstname,
+            last_name: props.lastname,
+          },
+          {
+            onConflict: "org_id,provider,external_id",
+          },
+        );
+      }
+
+      // Normalize deals to opportunities
+      const { data: rawDeals } = await supabaseAdmin
+        .from("raw_objects")
+        .select("external_id, payload_json")
+        .eq("org_id", orgId)
+        .eq("provider", "hubspot")
+        .eq("object_type", "deal");
+
+      for (const rawDeal of rawDeals || []) {
+        const props = rawDeal.payload_json?.properties || {};
+        const amount = props.amount ? Math.round(parseFloat(props.amount) * 100) : null; // Convert to cents
+
+        let status = "open";
+        if (props.dealstage === "closedwon") status = "won";
+        else if (props.dealstage === "closedlost") status = "lost";
+
+        await supabaseAdmin.from("opportunities").upsert(
+          {
+            org_id: orgId,
+            external_id: rawDeal.external_id,
+            provider: "hubspot",
+            name: props.dealname || "Unnamed Deal",
+            amount: amount,
+            stage: props.dealstage,
+            status: status,
+            close_date: props.closedate,
+            source: props.hs_campaign || props.dealtype || props.source,
+          },
+          {
+            onConflict: "org_id,provider,external_id",
+          },
+        );
+      }
+
       // Update last synced timestamp
       await supabaseAdmin
         .from("oauth_connections")
