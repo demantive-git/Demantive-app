@@ -34,10 +34,11 @@ export async function GET(request: NextRequest) {
 
   const clientId = process.env.HUBSPOT_CLIENT_ID;
   const clientSecret = process.env.HUBSPOT_CLIENT_SECRET;
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
-  const redirectUri = `${baseUrl}/api/auth/hubspot/callback`;
+  // Always use production URL for OAuth callback
+  const redirectUri =
+    process.env.NODE_ENV === "production"
+      ? `https://demantive-app-web.vercel.app/api/auth/hubspot/callback`
+      : `http://localhost:3000/api/auth/hubspot/callback`;
 
   if (!clientId || !clientSecret) {
     return NextResponse.redirect(

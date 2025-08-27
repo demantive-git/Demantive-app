@@ -13,11 +13,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "HubSpot not configured" }, { status: 500 });
   }
 
-  // Build HubSpot OAuth URL
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
-  const redirectUri = `${baseUrl}/api/auth/hubspot/callback`;
+  // Build HubSpot OAuth URL - always use production URL for OAuth
+  const redirectUri =
+    process.env.NODE_ENV === "production"
+      ? `https://demantive-app-web.vercel.app/api/auth/hubspot/callback`
+      : `http://localhost:3000/api/auth/hubspot/callback`;
   const scopes = [
     "oauth",
     "crm.objects.leads.read",
