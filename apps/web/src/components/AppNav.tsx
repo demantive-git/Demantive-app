@@ -18,14 +18,14 @@ export function AppNav() {
     <nav className="bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo/App Name */}
+          {/* Logo and Navigation */}
           <div className="flex items-center gap-8">
-            <Link href={`/dashboard?org=${orgId}`} className="font-semibold text-xl text-gray-900">
+            <Link href={`/dashboard?org=${orgId}`} className="text-xl font-semibold">
               Demantive
             </Link>
 
             {/* Navigation Items */}
-            <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-6">
               {navItems.map((item) => {
                 const isActive = pathname === item.href.split("?")[0];
                 return (
@@ -33,7 +33,7 @@ export function AppNav() {
                     key={item.href}
                     href={item.href}
                     className={`text-sm font-medium transition-colors ${
-                      isActive ? "text-black" : "text-gray-600 hover:text-gray-900"
+                      isActive ? "text-gray-900" : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
                     {item.label}
