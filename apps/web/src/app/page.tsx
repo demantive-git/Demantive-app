@@ -80,32 +80,6 @@ export default function Home() {
               No credit card required • 14-day free trial • Cancel anytime
             </p>
           </div>
-
-          {/* Hero Image/Graphic */}
-          <div className="mt-20 relative">
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10"></div>
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-1 shadow-2xl">
-              <div className="bg-white rounded-xl p-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-full animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-5/6 animate-pulse"></div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-                    <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-full animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-4/5 animate-pulse"></div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-                    <div className="h-4 bg-gray-200 rounded w-4/5 animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-full animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
